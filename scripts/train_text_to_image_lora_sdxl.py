@@ -1082,15 +1082,20 @@ def main(args):
                     loss = F.mse_loss(model_pred.float(), target.float(), reduction="mean")
                      # add
                     if args.use_reward:
-                        tag_total = 0
-                        for label in batch["label"]:
-                            tag = (label == True) * 0.9
-                            tag += (label == False) * 0.4
+                        loss_total = 0
+                        for i in range(len(batch["label"])):
+                            model_pred_per_batch = torch.unsqueeze(model_pred[i], dim=0)
+                            target_per_batch = torch.unsqueeze(target[i], dim=0)
+                            loss_per_batch = F.mse_loss(model_pred_per_batch.float(), target_per_batch.float(), reduction="mean")
+                            tag = (batch["label"][i] == True) * 0.9
+                            tag += (batch["label"][i] == False) * 0.4
+                            # tag += (batch["label"][i] == False) * 0.6
                             tag += 0.1
-                            tag_total += tag
-                        tag_total = tag_total / args.train_batch_size
-                        print(tag_total)
-                        loss = loss * tag_total
+                            print(tag)
+                            loss_per_batch = loss_per_batch * tag
+                            loss_total += loss_per_batch
+                        loss = loss_total / args.train_batch_size
+                        print(loss)
                     # end add
                 else:
                     # Compute loss-weights as per Section 3.4 of https://arxiv.org/abs/2303.09556.

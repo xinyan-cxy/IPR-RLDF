@@ -26,9 +26,67 @@ an iterative process of image sampling and prompt relabeling.
 
 **(4) Iterative Training:** retrain the model with the updated dataset iteratively.
 
+## Installation and Setup
+
+***Environment*** This repo requires Pytorch=1.10.1 and torchvision.
+
+Install the diffusers:
+
+```
+pip install diffusers
+```
+
+Then install the following packages for GLIP:
+
+```
+cd GLIP
+pip install einops shapely timm yacs tensorboardX ftfy prettytable pymongo opencv-python nltk scipy pycocotools 
+pip install transformers 
+pip install numpy==1.23.5
+python setup.py build develop --user
+```
+
+***Backbone Checkpoints.*** Download the ImageNet pre-trained backbone checkpoints into the `GLIP/MODEL` folder.
+
+```
+mkdir MODEL
+wget https://penzhanwu2bbs.blob.core.windows.net/data/GLIPv1_Open/models/swin_tiny_patch4_window7_224.pth -O swin_tiny_patch4_window7_224.pth
+wget https://penzhanwu2bbs.blob.core.windows.net/data/GLIPv1_Open/models/swin_large_patch4_window12_384_22k.pth -O swin_large_patch4_window12_384_22k.pth
+```
+
+Then download the GLPT-L model:
+
+```
+wget https://penzhanwu2bbs.blob.core.windows.net/data/GLIPv1_Open/models/glip_large_model.pth -O MODEL/glip_large_model.pth
+```
+
+## Training
+
+Finetune the *stable-diffusion-2-1* for 2 iterations:
+
+```
+cd scripts
+bash run_sdv2.sh
+```
+
+Finetune the *stable-diffusion-2-1* with LoRA for 2 iterations:
+
+```
+cd scripts
+bash run_sdv2_lora.sh
+```
+
+Finetune the *stable-diffusion-xl-base-1.0* with LoRA for 2 iterations:
+
+```
+cd scripts
+bash run_sdxl_lora.sh
+```
+
+
 ## Citation
 
-If you use or extend our work, please cite the paper as follows:
+If you find our work useful for your research and applications, please kindly cite using this BibTeX:
 
 ```bib
 @misc{chen2024learningmistakesiterativeprompt,

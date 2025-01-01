@@ -974,18 +974,6 @@ def main():
                     loss = F.mse_loss(model_pred.float(), target.float(), reduction="none")
                     loss = loss.mean(dim=list(range(1, len(loss.shape)))) * mse_loss_weights
                     loss = loss.mean()
-                    # add
-                    if args.use_reward:
-                        tag_total = 0
-                        for label in batch["label"]:
-                            tag = (label == True) * 0.9
-                            tag += (label == False) * 0.4
-                            tag += 0.1
-                            tag_total += tag
-                        tag_total = tag_total / args.train_batch_size
-                        print(tag_total)
-                        loss = loss * tag_total
-                    # end add
 
                 # Gather the losses across all processes for logging (if we use distributed training).
                 avg_loss = accelerator.gather(loss.repeat(args.train_batch_size)).mean()
